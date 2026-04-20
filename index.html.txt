@@ -1,0 +1,1443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Uday Kiran Reddy | Network Engineer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap" rel="stylesheet"/>
+<style>
+/* ===== CSS VARIABLES ===== */
+:root {
+  --indigo: #3730a3;
+  --indigo-light: #6366f1;
+  --pink: #ec4899;
+  --cyan: #06b6d4;
+  --amber: #f59e0b;
+  --bg: #06060f;
+  --bg2: #0d0d1a;
+  --bg3: #12121f;
+  --surface: rgba(255,255,255,0.04);
+  --border: rgba(255,255,255,0.08);
+  --text: #e2e8f0;
+  --text-muted: #64748b;
+  --grad1: linear-gradient(135deg, var(--indigo-light), var(--pink));
+  --grad2: linear-gradient(135deg, var(--cyan), var(--indigo-light));
+  --grad3: linear-gradient(135deg, var(--amber), var(--pink));
+}
+
+/* ===== RESET ===== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+/* ===== SCROLLBAR ===== */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg2); }
+::-webkit-scrollbar-thumb { background: var(--indigo-light); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--pink); }
+
+/* ===== NOISE OVERLAY ===== */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+  opacity: 0.03;
+  pointer-events: none;
+  z-index: 9998;
+}
+
+/* ===== CUSTOM CURSOR ===== */
+#cursor-dot {
+  width: 8px; height: 8px;
+  background: var(--cyan);
+  border-radius: 50%;
+  position: fixed;
+  top: 0; left: 0;
+  transform: translate(-50%,-50%);
+  pointer-events: none;
+  z-index: 99999;
+  box-shadow: 0 0 10px var(--cyan), 0 0 20px var(--cyan);
+  transition: width 0.2s, height 0.2s, background 0.2s;
+}
+#cursor-ring {
+  width: 36px; height: 36px;
+  border: 1.5px solid rgba(99,102,241,0.7);
+  border-radius: 50%;
+  position: fixed;
+  top: 0; left: 0;
+  transform: translate(-50%,-50%);
+  pointer-events: none;
+  z-index: 99998;
+  transition: transform 0.12s ease, width 0.25s, height 0.25s, border-color 0.25s;
+}
+body:hover #cursor-ring { border-color: var(--pink); }
+
+/* ===== PARTICLE CANVAS ===== */
+#particle-canvas {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* ===== LOADING SCREEN ===== */
+#loader {
+  position: fixed;
+  inset: 0;
+  background: var(--bg);
+  z-index: 99997;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 32px;
+  transition: opacity 0.7s ease, visibility 0.7s ease;
+}
+#loader.hidden { opacity: 0; visibility: hidden; }
+.loader-initials {
+  font-family: 'Syne', sans-serif;
+  font-size: 80px;
+  font-weight: 800;
+  background: linear-gradient(135deg, var(--indigo-light), var(--pink), var(--cyan), var(--amber));
+  background-size: 300% 300%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: gradShift 2s linear infinite;
+  letter-spacing: -2px;
+}
+.loader-bar-wrap {
+  width: 240px;
+  height: 3px;
+  background: var(--border);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.loader-bar {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, var(--indigo-light), var(--pink), var(--cyan), var(--amber));
+  background-size: 300% 100%;
+  border-radius: 2px;
+  animation: loadProgress 2s ease forwards, gradShift 1s linear infinite;
+}
+@keyframes loadProgress { 0%{width:0%} 100%{width:100%} }
+
+/* ===== NAVBAR ===== */
+nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 1000;
+  padding: 0 5%;
+  height: 70px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(6,6,15,0.6);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+  transform: translateY(-100%);
+  animation: slideDown 0.6s 2.2s ease forwards;
+}
+@keyframes slideDown { to { transform: translateY(0); } }
+.nav-logo {
+  font-family: 'Syne', sans-serif;
+  font-weight: 800;
+  font-size: 18px;
+  background: var(--grad1);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: -0.5px;
+}
+.nav-links { display: flex; gap: 32px; list-style: none; }
+.nav-links a {
+  color: var(--text-muted);
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0.3px;
+  position: relative;
+  transition: color 0.2s;
+}
+.nav-links a::after {
+  content: '';
+  position: absolute;
+  bottom: -3px; left: 0;
+  width: 0; height: 2px;
+  background: var(--grad1);
+  border-radius: 1px;
+  transition: width 0.3s ease;
+}
+.nav-links a:hover { color: var(--text); }
+.nav-links a:hover::after { width: 100%; }
+
+/* ===== SECTION WRAPPER ===== */
+section {
+  position: relative;
+  z-index: 1;
+  padding: 100px 5%;
+}
+.section-label {
+  font-family: 'Syne', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--cyan);
+  margin-bottom: 12px;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+.section-label.visible { opacity: 1; transform: translateY(0); }
+.section-title {
+  font-family: 'Syne', sans-serif;
+  font-size: clamp(28px, 4vw, 42px);
+  font-weight: 800;
+  line-height: 1.15;
+  letter-spacing: -1px;
+  margin-bottom: 60px;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.6s 0.1s ease, transform 0.6s 0.1s ease;
+}
+.section-title.visible { opacity: 1; transform: translateY(0); }
+.section-title span {
+  background: var(--grad1);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ===== HERO SECTION ===== */
+#hero {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  padding-top: 70px;
+  gap: 60px;
+}
+.hero-left { flex: 1; }
+.hero-right { flex: 0 0 380px; display: flex; justify-content: center; align-items: center; }
+
+.availability-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(6,182,212,0.1);
+  border: 1px solid rgba(6,182,212,0.3);
+  border-radius: 100px;
+  padding: 6px 14px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--cyan);
+  margin-bottom: 24px;
+  letter-spacing: 0.5px;
+  animation: fadeUp 0.7s 2.4s ease both;
+}
+.availability-tag .dot {
+  width: 7px; height: 7px;
+  background: var(--cyan);
+  border-radius: 50%;
+  animation: pulse-dot 1.5s infinite;
+  box-shadow: 0 0 6px var(--cyan);
+}
+@keyframes pulse-dot { 0%,100%{transform:scale(1);opacity:1} 50%{transform:scale(1.5);opacity:0.6} }
+
+.hero-name {
+  font-family: 'Syne', sans-serif;
+  font-size: clamp(38px, 6vw, 72px);
+  font-weight: 800;
+  line-height: 1.05;
+  letter-spacing: -2px;
+  background: linear-gradient(90deg, #e2e8f0 20%, var(--indigo-light) 40%, var(--pink) 55%, var(--cyan) 70%, #e2e8f0 85%);
+  background-size: 250% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: shimmerText 4s linear infinite, fadeUp 0.7s 2.5s ease both;
+}
+@keyframes shimmerText { 0%{background-position:0% center} 100%{background-position:250% center} }
+
+.hero-title {
+  font-size: 18px;
+  font-weight: 400;
+  color: var(--text-muted);
+  margin-top: 14px;
+  margin-bottom: 32px;
+  animation: fadeUp 0.7s 2.6s ease both;
+}
+.hero-title strong { color: var(--indigo-light); font-weight: 600; }
+
+.hero-ctas {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  animation: fadeUp 0.7s 2.7s ease both;
+}
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 13px 28px;
+  background: var(--grad1);
+  border: none;
+  border-radius: 100px;
+  color: white;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(99,102,241,0.4); }
+.btn-outline {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 13px 28px;
+  background: transparent;
+  border: 1.5px solid var(--border);
+  border-radius: 100px;
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: none;
+  text-decoration: none;
+  transition: border-color 0.2s, background 0.2s, transform 0.2s;
+}
+.btn-outline:hover { border-color: var(--indigo-light); background: rgba(99,102,241,0.1); transform: translateY(-2px); }
+
+/* Hero 3D Card */
+.hero-card-wrap {
+  position: relative;
+  width: 280px;
+  height: 320px;
+  animation: fadeUp 0.7s 2.5s ease both;
+}
+.hero-card-glow {
+  position: absolute;
+  inset: -40px;
+  background: radial-gradient(circle, rgba(99,102,241,0.3) 0%, transparent 70%);
+  animation: glowPulse 3s ease-in-out infinite;
+}
+@keyframes glowPulse { 0%,100%{opacity:0.5;transform:scale(1)} 50%{opacity:1;transform:scale(1.1)} }
+
+.hero-card {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, rgba(55,48,163,0.3), rgba(236,72,153,0.1));
+  border: 1px solid rgba(99,102,241,0.3);
+  border-radius: 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  animation: float3d 4s ease-in-out infinite;
+  backdrop-filter: blur(10px);
+  z-index: 1;
+}
+@keyframes float3d {
+  0%,100%{transform:translateY(0) rotateY(0deg) rotateX(0deg)}
+  25%{transform:translateY(-12px) rotateY(4deg) rotateX(2deg)}
+  50%{transform:translateY(-6px) rotateY(-3deg) rotateX(-2deg)}
+  75%{transform:translateY(-14px) rotateY(2deg) rotateX(3deg)}
+}
+
+.card-avatar {
+  width: 80px; height: 80px;
+  border-radius: 50%;
+  background: var(--grad1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Syne', sans-serif;
+  font-size: 28px;
+  font-weight: 800;
+  color: white;
+  position: relative;
+}
+.card-role {
+  font-family: 'Syne', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text);
+  text-align: center;
+}
+.card-stats {
+  display: flex;
+  gap: 20px;
+}
+.stat {
+  text-align: center;
+}
+.stat-num {
+  font-family: 'Syne', sans-serif;
+  font-size: 22px;
+  font-weight: 800;
+  background: var(--grad1);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.stat-label {
+  font-size: 10px;
+  color: var(--text-muted);
+  font-weight: 500;
+  letter-spacing: 0.5px;
+}
+
+/* Spinning ring */
+.spin-ring {
+  position: absolute;
+  inset: -20px;
+  border-radius: 50%;
+  border: 2px dashed rgba(99,102,241,0.4);
+  animation: spinRing 10s linear infinite;
+  width: calc(100% + 40px);
+  height: calc(100% + 40px);
+  top: -20px; left: -20px;
+  pointer-events: none;
+}
+@keyframes spinRing { to { transform: rotate(360deg); } }
+
+/* ===== MARQUEE ===== */
+.marquee-section {
+  padding: 30px 0;
+  overflow: hidden;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  position: relative;
+  z-index: 1;
+}
+.marquee-track {
+  display: flex;
+  gap: 48px;
+  width: max-content;
+  animation: marqueeScroll 28s linear infinite;
+}
+.marquee-track:hover { animation-play-state: paused; }
+@keyframes marqueeScroll { 0%{transform:translateX(0)} 100%{transform:translateX(-50%)} }
+.marquee-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-family: 'Syne', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-muted);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.marquee-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--pink); }
+
+/* ===== SKILLS SECTION ===== */
+#skills { background: var(--bg2); }
+.skills-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 60px 80px;
+}
+.skill-category-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--pink);
+  margin-bottom: 24px;
+  grid-column: 1/-1;
+}
+.skill-item { margin-bottom: 20px; }
+.skill-header { display: flex; justify-content: space-between; margin-bottom: 8px; }
+.skill-name { font-size: 14px; font-weight: 500; color: var(--text); }
+.skill-pct { font-size: 12px; font-weight: 600; color: var(--text-muted); }
+.skill-bar-bg {
+  height: 6px;
+  background: var(--border);
+  border-radius: 3px;
+  overflow: hidden;
+}
+.skill-bar-fill {
+  height: 100%;
+  width: 0%;
+  border-radius: 3px;
+  position: relative;
+  transition: width 1.2s cubic-bezier(0.4,0,0.2,1);
+}
+.skill-bar-fill::after {
+  content: '';
+  position: absolute;
+  top: 0; left: -100%; width: 60%;
+  height: 100%;
+  background: rgba(255,255,255,0.4);
+  animation: shimmerBar 2s 1.5s ease forwards;
+  transform: skewX(-20deg);
+}
+@keyframes shimmerBar { 0%{left:-100%} 100%{left:150%} }
+.bar-indigo { background: linear-gradient(90deg, var(--indigo-light), var(--pink)); }
+.bar-cyan { background: linear-gradient(90deg, var(--cyan), var(--indigo-light)); }
+.bar-amber { background: linear-gradient(90deg, var(--amber), var(--pink)); }
+
+/* Tech chip cloud */
+.chip-cloud {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 48px;
+}
+.tech-chip {
+  padding: 6px 14px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 100px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-muted);
+  transition: transform 0.25s ease, border-color 0.25s, color 0.25s, box-shadow 0.25s;
+  cursor: default;
+}
+.tech-chip:hover {
+  transform: translateY(-5px);
+  border-color: var(--indigo-light);
+  color: var(--text);
+  box-shadow: 0 4px 20px rgba(99,102,241,0.25);
+}
+
+/* ===== EXPERIENCE SECTION ===== */
+#experience { }
+.timeline {
+  position: relative;
+  padding-left: 32px;
+}
+.timeline::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 2px;
+  background: linear-gradient(180deg, var(--indigo-light), var(--pink), var(--cyan), var(--amber));
+  border-radius: 1px;
+}
+.timeline-item {
+  position: relative;
+  margin-bottom: 48px;
+  opacity: 0;
+  transform: translateX(-30px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+.timeline-item.visible { opacity: 1; transform: translateX(0); }
+.timeline-dot {
+  position: absolute;
+  left: -40px; top: 6px;
+  width: 14px; height: 14px;
+  border-radius: 50%;
+  background: var(--grad1);
+  border: 2px solid var(--bg);
+  box-shadow: 0 0 10px rgba(99,102,241,0.5);
+}
+.job-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 28px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s;
+}
+.job-card:hover {
+  transform: translateX(8px);
+  box-shadow: 0 8px 40px rgba(99,102,241,0.15);
+  border-color: rgba(99,102,241,0.3);
+}
+.job-header { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 12px; margin-bottom: 16px; }
+.job-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text);
+}
+.job-company {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--indigo-light);
+  margin-top: 2px;
+}
+.job-meta { text-align: right; }
+.job-dates {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(99,102,241,0.1);
+  border: 1px solid rgba(99,102,241,0.2);
+  border-radius: 100px;
+  padding: 4px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--indigo-light);
+}
+.job-location { font-size: 12px; color: var(--text-muted); margin-top: 6px; }
+.job-desc {
+  font-size: 13.5px;
+  color: var(--text-muted);
+  line-height: 1.7;
+  margin-bottom: 16px;
+}
+.job-desc li { margin-bottom: 6px; margin-left: 16px; }
+.badge-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+.badge {
+  padding: 3px 10px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+}
+.badge-pink { background: rgba(236,72,153,0.15); color: var(--pink); border: 1px solid rgba(236,72,153,0.25); }
+.badge-cyan { background: rgba(6,182,212,0.15); color: var(--cyan); border: 1px solid rgba(6,182,212,0.25); }
+.badge-amber { background: rgba(245,158,11,0.15); color: var(--amber); border: 1px solid rgba(245,158,11,0.25); }
+.badge-indigo { background: rgba(99,102,241,0.15); color: var(--indigo-light); border: 1px solid rgba(99,102,241,0.25); }
+
+/* ===== PROJECTS SECTION ===== */
+#projects { background: var(--bg2); }
+.projects-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+.project-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 28px;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.5s ease, transform 0.5s ease, box-shadow 0.3s;
+}
+.project-card.visible { opacity: 1; transform: translateY(0); }
+.project-card:hover { transform: translateY(-8px); box-shadow: 0 20px 50px rgba(99,102,241,0.2); }
+.project-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: -100%; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--indigo-light), var(--pink), transparent);
+  transition: left 0.5s ease;
+}
+.project-card:hover::before { left: 0; }
+.project-emoji { font-size: 36px; margin-bottom: 16px; }
+.project-name {
+  font-family: 'Syne', sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 10px;
+}
+.project-desc { font-size: 13px; color: var(--text-muted); line-height: 1.65; margin-bottom: 16px; }
+.project-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+.project-tag {
+  padding: 3px 10px;
+  background: rgba(99,102,241,0.1);
+  border: 1px solid rgba(99,102,241,0.2);
+  border-radius: 100px;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--indigo-light);
+}
+
+/* ===== EDUCATION SECTION ===== */
+#education {}
+.edu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+.edu-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 28px;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+.edu-card.visible { opacity: 1; transform: translateY(0); }
+.edu-degree {
+  font-family: 'Syne', sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 8px;
+}
+.edu-school { font-size: 14px; color: var(--indigo-light); font-weight: 500; margin-bottom: 6px; }
+.edu-location { font-size: 13px; color: var(--text-muted); }
+
+.cert-section { margin-top: 48px; }
+.cert-card {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  background: linear-gradient(135deg, rgba(55,48,163,0.2), rgba(236,72,153,0.1));
+  border: 1px solid rgba(99,102,241,0.3);
+  border-radius: 14px;
+  padding: 20px 28px;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+.cert-card.visible { opacity: 1; transform: translateY(0); }
+.cert-icon {
+  width: 44px; height: 44px;
+  background: var(--grad1);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+}
+.cert-name {
+  font-family: 'Syne', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text);
+}
+.cert-sub { font-size: 12px; color: var(--text-muted); }
+
+/* ===== CONTACT SECTION ===== */
+#contact { background: var(--bg2); }
+.contact-grid { display: grid; grid-template-columns: 1fr auto; gap: 60px; align-items: center; }
+.contact-cards { display: flex; flex-direction: column; gap: 16px; }
+.contact-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 18px 22px;
+  transition: transform 0.3s ease, border-color 0.3s, box-shadow 0.3s;
+  opacity: 0;
+  transform: translateX(-30px);
+  text-decoration: none;
+}
+.contact-card.visible { opacity: 1; transform: translateX(0); }
+.contact-card:hover {
+  transform: translateX(8px);
+  border-color: rgba(99,102,241,0.3);
+  box-shadow: 0 4px 20px rgba(99,102,241,0.1);
+}
+.contact-icon {
+  width: 42px; height: 42px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+.contact-label { font-size: 11px; color: var(--text-muted); font-weight: 500; letter-spacing: 0.5px; text-transform: uppercase; }
+.contact-value { font-size: 14px; font-weight: 600; color: var(--text); }
+
+/* Ripple avatar */
+.ripple-wrap {
+  position: relative;
+  width: 180px;
+  height: 180px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.ripple-ring {
+  position: absolute;
+  border-radius: 50%;
+  border: 1.5px solid var(--indigo-light);
+  animation: rippleOut 3s ease-out infinite;
+}
+.ripple-ring:nth-child(1) { width: 90px; height: 90px; animation-delay: 0s; }
+.ripple-ring:nth-child(2) { width: 130px; height: 130px; animation-delay: 1s; }
+.ripple-ring:nth-child(3) { width: 170px; height: 170px; animation-delay: 2s; }
+@keyframes rippleOut { 0%{opacity:0.8;transform:scale(0.9)} 100%{opacity:0;transform:scale(1.2)} }
+.ripple-avatar {
+  width: 80px; height: 80px;
+  border-radius: 50%;
+  background: var(--grad1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Syne', sans-serif;
+  font-size: 26px;
+  font-weight: 800;
+  color: white;
+  position: relative;
+  z-index: 1;
+  box-shadow: 0 0 30px rgba(99,102,241,0.5);
+}
+
+/* ===== FOOTER ===== */
+footer {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  padding: 32px;
+  border-top: 1px solid var(--border);
+  font-size: 13px;
+  color: var(--text-muted);
+}
+footer span { color: var(--pink); }
+
+/* ===== ANIMATIONS ===== */
+@keyframes gradShift { 0%{background-position:0% 50%} 100%{background-position:300% 50%} }
+@keyframes fadeUp { from{opacity:0;transform:translateY(30px)} to{opacity:1;transform:translateY(0)} }
+.reveal {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+.reveal.visible { opacity: 1; transform: translateY(0); }
+.reveal-left {
+  opacity: 0;
+  transform: translateX(-30px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+.reveal-left.visible { opacity: 1; transform: translateX(0); }
+.reveal-right {
+  opacity: 0;
+  transform: translateX(30px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+.reveal-right.visible { opacity: 1; transform: translateX(0); }
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 900px) {
+  #hero { flex-direction: column; text-align: center; padding-top: 120px; }
+  .hero-right { display: none; }
+  .skills-grid { grid-template-columns: 1fr; }
+  .projects-grid { grid-template-columns: 1fr; }
+  .edu-grid { grid-template-columns: 1fr; }
+  .contact-grid { grid-template-columns: 1fr; }
+  .ripple-wrap { display: none; }
+  .nav-links { display: none; }
+}
+@media (max-width: 600px) {
+  section { padding: 80px 5%; }
+  .hero-ctas { justify-content: center; }
+}
+</style>
+</head>
+<body>
+
+<!-- CURSOR -->
+<div id="cursor-dot"></div>
+<div id="cursor-ring"></div>
+
+<!-- PARTICLE CANVAS -->
+<canvas id="particle-canvas"></canvas>
+
+<!-- LOADING SCREEN -->
+<div id="loader">
+  <div class="loader-initials">UKR</div>
+  <div class="loader-bar-wrap">
+    <div class="loader-bar"></div>
+  </div>
+</div>
+
+<!-- NAVBAR -->
+<nav>
+  <div class="nav-logo">Uday Kiran Reddy</div>
+  <ul class="nav-links">
+    <li><a href="#hero">Home</a></li>
+    <li><a href="#skills">Skills</a></li>
+    <li><a href="#experience">Experience</a></li>
+    <li><a href="#projects">Projects</a></li>
+    <li><a href="#education">Education</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-left">
+    <div class="availability-tag">
+      <span class="dot"></span>
+      Open to Opportunities
+    </div>
+    <h1 class="hero-name">Uday Kiran<br/>Reddy Buchagari</h1>
+    <p class="hero-title">
+		<strong>Network Engineer</strong> specializing in AWS, Routing & Network Security · CCNA Certified · 4+ Years Experience
+	</p>
+	<p style="margin-top:10px;color:#94a3b8;font-size:14px;">
+	Specialized in AWS VPC, Site-to-Site VPN, BGP/OSPF Routing, and Enterprise Network Security
+	</p>
+	<p style="margin-top:10px;font-size:13px;color:#94a3b8;">
+	Improved MTTR by 30% · Managed 150+ branch networks · 99.9% uptime
+	</p>
+    <div class="hero-ctas">
+  <a href="mailto:udaykiranbuchagari99@gmail.com" class="btn-primary">✉ Get In Touch</a>
+  <a href="#experience" class="btn-outline">View Experience →</a>
+  <a href="resume.pdf" target="_blank" class="btn-outline">Download Resume</a>
+  <a href="https://www.linkedin.com/in/udaykiranreddy-buchagari" target="_blank" class="btn-outline">LinkedIn</a>
+</div>
+  </div>
+  <div class="hero-right">
+    <div class="hero-card-wrap">
+      <div class="hero-card-glow"></div>
+      <div class="hero-card">
+        <div class="spin-ring"></div>
+        <div class="card-avatar">UKR</div>
+        <div class="card-role">Network Engineer</div>
+        <div class="card-stats">
+          <div class="stat">
+            <div class="stat-num">4+</div>
+            <div class="stat-label">Years Exp</div>
+          </div>
+          <div class="stat">
+            <div class="stat-num">99.9%</div>
+            <div class="stat-label">Uptime</div>
+          </div>
+          <div class="stat">
+            <div class="stat-num">30%</div>
+            <div class="stat-label">MTTR ↓</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MARQUEE -->
+<div class="marquee-section">
+  <div class="marquee-track" id="marquee-track">
+    <!-- items injected by JS -->
+  </div>
+</div>
+
+<!-- SKILLS -->
+<section id="skills">
+  <div class="section-label">What I Know</div>
+  <div class="section-title">Technical <span>Skills</span></div>
+
+  <div class="skills-grid">
+    <div>
+      <div class="skill-category-title">Networking & Routing</div>
+      <div class="skill-item reveal">
+        <div class="skill-header"><span class="skill-name">BGP / OSPF / EIGRP</span><span class="skill-pct">92%</span></div>
+        <div class="skill-bar-bg"><div class="skill-bar-fill bar-indigo" data-w="92"></div></div>
+      </div>
+      <div class="skill-item reveal">
+        <div class="skill-header"><span class="skill-name">VLANs / Inter-VLAN Routing</span><span class="skill-pct">90%</span></div>
+        <div class="skill-bar-bg"><div class="skill-bar-fill bar-indigo" data-w="90"></div></div>
+      </div>
+      <div class="skill-item reveal">
+        <div class="skill-header"><span class="skill-name">HSRP / STP / MPLS</span><span class="skill-pct">88%</span></div>
+        <div class="skill-bar-bg"><div class="skill-bar-fill bar-indigo" data-w="85"></div></div>
+      </div>
+      <div class="skill-item reveal">
+        <div class="skill-header"><span class="skill-name">LAN / WAN / SD-WAN / QoS</span><span class="skill-pct">87%</span></div>
+        <div class="skill-bar-bg"><div class="skill-bar-fill bar-indigo" data-w="82"></div></div>
+      </div>
+    </div>
+
+    <div>
+      <div class="skill-category-title">Firewall & Security</div>
+      <div class="skill-item reveal">
+        <div class="skill-header"><span class="skill-name">Cisco ASA / Palo Alto / Fortinet</span><span class="skill-pct">90%</span></div>
+        <div class="skill-bar-bg"><div class="skill-bar-fill bar-cyan" data-w="90"></div></div>
+      </div>
+      <div class="skill-item reveal">
+        <div class="skill-header"><span class="skill-name">VPN (Site-to-Site / Remote Access)</span><span class="skill-pct">88%</span></div>
+        <div class="skill-bar-bg"><div class="skill-bar-fill bar-cyan" data-w="88"></div></div>
+      </div>
+      <div class="skill-item reveal">
+        <div class="skill-header"><span class="skill-name">NAT / ACLs / IPS/IDS / NAC</span><span class="skill-pct">87%</span></div>
+        <div class="skill-bar-bg"><div class="skill-bar-fill bar-cyan" data-w="85"></div></div>
+      </div>
+      <div class="skill-item reveal">
+        <div class="skill-header"><span class="skill-name">Cisco ISE / PCI-DSS / HIPAA</span><span class="skill-pct">82%</span></div>
+        <div class="skill-bar-bg"><div class="skill-bar-fill bar-cyan" data-w="78"></div></div>
+      </div>
+    </div>
+
+    <div>
+      <div class="skill-category-title">Cloud & Virtualization</div>
+      <div class="skill-item reveal">
+        <div class="skill-header"><span class="skill-name">AWS VPC / Subnets / Route Tables</span><span class="skill-pct">90%</span></div>
+        <div class="skill-bar-bg"><div class="skill-bar-fill bar-amber" data-w="85"></div></div>
+      </div>
+      <div class="skill-item reveal">
+        <div class="skill-header"><span class="skill-name">AWS VPN / NAT Gateway</span><span class="skill-pct">85%</span></div>
+        <div class="skill-bar-bg"><div class="skill-bar-fill bar-amber" data-w="82"></div></div>
+      </div>
+      <div class="skill-item reveal">
+        <div class="skill-header"><span class="skill-name">Azure Networking</span><span class="skill-pct">75%</span></div>
+        <div class="skill-bar-bg"><div class="skill-bar-fill bar-amber" data-w="70"></div></div>
+      </div>
+      <div class="skill-item reveal">
+        <div class="skill-header"><span class="skill-name">VMware ESXi</span><span class="skill-pct">72%</span></div>
+        <div class="skill-bar-bg"><div class="skill-bar-fill bar-amber" data-w="68"></div></div>
+      </div>
+    </div>
+
+    <div>
+      <div class="skill-category-title">Automation & Monitoring</div>
+      <div class="skill-item reveal">
+        <div class="skill-header"><span class="skill-name">Python (Network Automation)</span><span class="skill-pct">82%</span></div>
+        <div class="skill-bar-bg"><div class="skill-bar-fill bar-indigo" data-w="80"></div></div>
+      </div>
+      <div class="skill-item reveal">
+        <div class="skill-header"><span class="skill-name">SolarWinds / Wireshark / Splunk</span><span class="skill-pct">90%</span></div>
+        <div class="skill-bar-bg"><div class="skill-bar-fill bar-indigo" data-w="88"></div></div>
+      </div>
+      <div class="skill-item reveal">
+        <div class="skill-header"><span class="skill-name">SNMP / NetFlow</span><span class="skill-pct">88%</span></div>
+        <div class="skill-bar-bg"><div class="skill-bar-fill bar-indigo" data-w="85"></div></div>
+      </div>
+      <div class="skill-item reveal">
+        <div class="skill-header"><span class="skill-name">Ansible / Bash Scripting</span><span class="skill-pct">75%</span></div>
+        <div class="skill-bar-bg"><div class="skill-bar-fill bar-indigo" data-w="65"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="chip-cloud reveal" style="transition-delay:0.3s">
+    <!-- Generated by JS -->
+  </div>
+</section>
+
+<!-- EXPERIENCE -->
+<section id="experience">
+  <div class="section-label">Career Journey</div>
+  <div class="section-title">Work <span>Experience</span></div>
+
+  <div class="timeline">
+    <!-- Freyr Solutions -->
+    <div class="timeline-item">
+      <div class="timeline-dot"></div>
+      <div class="job-card">
+        <div class="job-header">
+          <div>
+            <div class="job-title">Network Engineer</div>
+            <div class="job-company">Freyr Solutions</div>
+          </div>
+          <div class="job-meta">
+            <div class="job-dates">📅 Feb 2025 – Present</div>
+            <div class="job-location">📍 Princeton, New Jersey</div>
+          </div>
+        </div>
+        <ul class="job-desc">
+          <li>Maintained high availability (99.9% uptime) across multi-site enterprise infrastructure through proactive monitoring and incident response.</li>
+          <li>Designed Layer 2/Layer 3 network including VLANs, inter-VLAN routing, and routing protocol optimization (OSPF, EIGRP, BGP).</li>
+          <li>Supported hybrid on-prem ↔ AWS VPC connectivity: subnets, route tables, and secure site-to-site VPN tunnels.</li>
+          <li>Managed firewalls across Cisco ASA, Palo Alto, and Fortinet — access policies, NAT, and VPN configurations.</li>
+          <li>Developed Python scripts for configuration validation; reduced manual effort and improved accuracy.</li>
+          <li>Reduced MTTR by ~30% using SNMP, SolarWinds, NetFlow, and Wireshark proactive alerting.</li>
+          <li>Maintained comprehensive network documentation: diagrams, runbooks, and configuration standards.</li>
+        </ul>
+        <div class="badge-chips">
+          <span class="badge badge-indigo">BGP / OSPF / EIGRP</span>
+          <span class="badge badge-cyan">AWS VPC / VPN</span>
+          <span class="badge badge-pink">Cisco ASA · Palo Alto · Fortinet</span>
+          <span class="badge badge-amber">Python Automation</span>
+          <span class="badge badge-indigo">SolarWinds</span>
+          <span class="badge badge-cyan">HSRP / Failover</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Citibank -->
+    <div class="timeline-item">
+      <div class="timeline-dot"></div>
+      <div class="job-card">
+        <div class="job-header">
+          <div>
+            <div class="job-title">Network Engineer</div>
+            <div class="job-company">Citibank</div>
+          </div>
+          <div class="job-meta">
+            <div class="job-dates">📅 Feb 2024 – Jan 2025</div>
+            <div class="job-location">📍 New York, NY</div>
+          </div>
+        </div>
+        <ul class="job-desc">
+          <li>Managed network operations supporting 150+ branch environments, maintaining 99.9% uptime for critical banking systems.</li>
+          <li>Administered Cisco ASA, Palo Alto, and Fortinet firewalls; supported PCI-DSS compliance initiatives.</li>
+          <li>Built and maintained secure site-to-site VPN tunnels, reducing inter-branch latency.</li>
+          <li>Improved incident response time by 35% through SolarWinds, Splunk, NetFlow, and Wireshark monitoring.</li>
+          <li>Worked within MPLS WAN environments; gained SD-WAN exposure for traffic path selection and centralized control.</li>
+          <li>Applied QoS policies to prioritize critical financial transactions and reduce congestion.</li>
+          <li>Supported application migrations with stable routing and zero service disruption.</li>
+        </ul>
+        <div class="badge-chips">
+          <span class="badge badge-pink">PCI-DSS Compliance</span>
+          <span class="badge badge-cyan">MPLS / SD-WAN</span>
+          <span class="badge badge-amber">QoS Policies</span>
+          <span class="badge badge-indigo">Splunk / SolarWinds</span>
+          <span class="badge badge-pink">150+ Branch Environments</span>
+          <span class="badge badge-cyan">VPN Tunnels</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Vivagene -->
+    <div class="timeline-item">
+      <div class="timeline-dot"></div>
+      <div class="job-card">
+        <div class="job-header">
+          <div>
+            <div class="job-title">Network Support Engineer</div>
+            <div class="job-company">Vivagene</div>
+          </div>
+          <div class="job-meta">
+            <div class="job-dates">📅 Aug 2020 – Jul 2022</div>
+            <div class="job-location">📍 Hyderabad, India</div>
+          </div>
+        </div>
+        <ul class="job-desc">
+          <li>Supported hospital network infrastructure serving 10,000+ users across clinical and administrative environments.</li>
+          <li>Performed rack and stack, device installation, patch panel management, and structured cabling in MDF/IDF environments.</li>
+          <li>Troubleshot Layer 1/2 issues — cable faults, port errors, VLAN mismatches; minimized downtime.</li>
+          <li>Configured Layer 2 switching: VLANs, trunking, port configs; assisted with inter-VLAN routing and OSPF/EIGRP troubleshooting.</li>
+          <li>Monitored performance using SNMP, SolarWinds, and NetFlow; escalated critical incidents.</li>
+          <li>Participated in on-call rotations for incident resolution and uptime maintenance.</li>
+        </ul>
+        <div class="badge-chips">
+          <span class="badge badge-amber">Healthcare Network</span>
+          <span class="badge badge-indigo">10,000+ Users</span>
+          <span class="badge badge-cyan">Structured Cabling</span>
+          <span class="badge badge-pink">Layer 1/2 Troubleshooting</span>
+          <span class="badge badge-indigo">SNMP / NetFlow</span>
+          <span class="badge badge-amber">Cisco Routers / Switches</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROJECTS -->
+<section id="projects">
+  <div class="section-label">What I've Built</div>
+  <div class="section-title">Featured <span>Projects</span></div>
+
+  <div class="projects-grid">
+    <div class="project-card">
+      <div class="project-emoji">☁️</div>
+      <div class="project-name">AWS Hybrid Network Architecture</div>
+      <div class="project-desc">Designed and validated AWS networking (VPC, VPN, BGP) enabling secure hybrid connectivity and improved network reliability.</div>
+      <div class="project-tags">
+        <span class="project-tag">AWS VPC</span>
+        <span class="project-tag">VPN</span>
+        <span class="project-tag">BGP</span>
+        <span class="project-tag">Failover</span>
+        <span class="project-tag">Subnetting</span>
+      </div>
+    </div>
+    <div class="project-card">
+      <div class="project-emoji">📊</div>
+      <div class="project-name">Proactive Network Monitoring System</div>
+      <div class="project-desc">Implemented SNMP, NetFlow, and SolarWinds-based monitoring infrastructure that achieved MTTR reduction through real-time proactive alerting and dashboards.</div>
+      <div class="project-tags">
+        <span class="project-tag">SNMP</span>
+        <span class="project-tag">NetFlow</span>
+        <span class="project-tag">SolarWinds</span>
+        <span class="project-tag">Wireshark</span>
+        <span class="project-tag">Splunk</span>
+      </div>
+    </div>
+    <div class="project-card">
+      <div class="project-emoji">🔥</div>
+      <div class="project-name">Enterprise Firewall Optimization</div>
+      <div class="project-desc">Optimized multi-vendor firewall environments (Cisco ASA, Palo Alto, Fortinet), tightening access policies, NAT rules, and VPN configurations to strengthen perimeter security.</div>
+      <div class="project-tags">
+        <span class="project-tag">Cisco ASA</span>
+        <span class="project-tag">Palo Alto</span>
+        <span class="project-tag">Fortinet</span>
+        <span class="project-tag">VPN</span>
+        <span class="project-tag">NAT</span>
+      </div>
+    </div>
+    <div class="project-card">
+      <div class="project-emoji">🔄</div>
+      <div class="project-name">Routing & High Availability Design</div>
+      <div class="project-desc">Engineered high-availability routing infrastructure using OSPF, EIGRP, BGP, and HSRP with failover mechanisms — minimizing downtime and ensuring sub-second convergence.</div>
+      <div class="project-tags">
+        <span class="project-tag">OSPF</span>
+        <span class="project-tag">EIGRP</span>
+        <span class="project-tag">BGP</span>
+        <span class="project-tag">HSRP</span>
+        <span class="project-tag">Failover</span>
+      </div>
+    </div>
+    <div class="project-card">
+      <div class="project-emoji">🐍</div>
+      <div class="project-name">Python Network Automation Scripts</div>
+      <div class="project-desc">Developed Python scripts for automated configuration validation and operational data collection, significantly reducing manual effort and human error across enterprise environments.</div>
+      <div class="project-tags">
+        <span class="project-tag">Python</span>
+        <span class="project-tag">Ansible</span>
+        <span class="project-tag">Bash</span>
+        <span class="project-tag">Automation</span>
+        <span class="project-tag">Git</span>
+      </div>
+    </div>
+    <div class="project-card">
+      <div class="project-emoji">🏥</div>
+      <div class="project-name">Healthcare Network Infrastructure</div>
+      <div class="project-desc">Deployed and maintained HIPAA-compliant hospital network serving 10,000+ users with structured cabling, Cisco switching/routing, and 24/7 incident response support.</div>
+      <div class="project-tags">
+        <span class="project-tag">HIPAA</span>
+        <span class="project-tag">Cisco</span>
+        <span class="project-tag">VLANs</span>
+        <span class="project-tag">Cabling</span>
+        <span class="project-tag">On-Call</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- EDUCATION -->
+<section id="education">
+  <div class="section-label">Academic Background</div>
+  <div class="section-title">Education &amp; <span>Certifications</span></div>
+
+  <div class="edu-grid">
+    <div class="edu-card reveal">
+      <div style="font-size:32px;margin-bottom:14px">🎓</div>
+      <div class="edu-degree">Master of Science in Computer Information Systems</div>
+      <div class="edu-school">Rivier University</div>
+      <div class="edu-location">📍 Nashua, NH, USA</div>
+    </div>
+    <div class="edu-card reveal" style="transition-delay:0.15s">
+      <div style="font-size:32px;margin-bottom:14px">🎓</div>
+      <div class="edu-degree">Bachelor of Science in Computer Science</div>
+      <div class="edu-school">MLRITM</div>
+      <div class="edu-location">📍 Hyderabad, India</div>
+    </div>
+  </div>
+
+  <div class="cert-section">
+    <div class="section-label" style="margin-top:0">Certification</div>
+    <div class="cert-card reveal" style="transition-delay:0.2s;margin-top:16px">
+      <div class="cert-icon">🏆</div>
+      <div>
+        <div class="cert-name">Cisco Certified Network Associate (CCNA)</div>
+        <div class="cert-sub">Cisco Systems · Active Certification</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="section-label">Get In Touch</div>
+  <div class="section-title">Let's <span>Connect</span></div>
+
+  <div class="contact-grid">
+    <div class="contact-cards">
+      <a href="mailto:udaykiranbuchagari99@gmail.com" class="contact-card">
+        <div class="contact-icon" style="background:rgba(99,102,241,0.15)">✉️</div>
+        <div>
+          <div class="contact-label">Email</div>
+          <div class="contact-value">udaykiranbuchagari99@gmail.com</div>
+        </div>
+      </a>
+      <a href="tel:6036881688" class="contact-card" style="transition-delay:0.1s">
+        <div class="contact-icon" style="background:rgba(6,182,212,0.15)">📱</div>
+        <div>
+          <div class="contact-label">Phone</div>
+          <div class="contact-value">(603) 688-1688</div>
+        </div>
+      </a>
+	  <a href="https://www.linkedin.com/in/udaykiranreddy-buchagari" class="contact-card" style="transition-delay:0.15s">
+		<div class="contact-icon" style="background:rgba(14,165,233,0.15)">🔗</div>
+		<div>
+			<div class="contact-label">LinkedIn</div>
+			<div class="contact-value">linkedin.com/in/Uday kiran reddy-Buchagari</div>
+		</div>
+	  </a>
+      <div class="contact-card" style="transition-delay:0.2s">
+        <div class="contact-icon" style="background:rgba(236,72,153,0.15)">📍</div>
+        <div>
+          <div class="contact-label">Location</div>
+          <div class="contact-value">Boston, Massachusetts, USA</div>
+        </div>
+      </div>
+      <div class="contact-card" style="transition-delay:0.3s">
+        <div class="contact-icon" style="background:rgba(245,158,11,0.15)">💼</div>
+        <div>
+          <div class="contact-label">Availability</div>
+          <div class="contact-value">Open to New Opportunities</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="ripple-wrap">
+      <div class="ripple-ring"></div>
+      <div class="ripple-ring"></div>
+      <div class="ripple-ring"></div>
+      <div class="ripple-avatar">UKR</div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <p>© 2026 Uday Kiran Reddy Buchagari · Built with precision & passion</p>
+</footer>
+
+<script>
+/* ===== LOADER ===== */
+setTimeout(() => {
+  document.getElementById('loader').classList.add('hidden');
+}, 1000);
+
+/* ===== CUSTOM CURSOR ===== */
+const dot = document.getElementById('cursor-dot');
+const ring = document.getElementById('cursor-ring');
+let mx = 0, my = 0, rx = 0, ry = 0;
+document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+(function animCursor() {
+  dot.style.left = mx + 'px'; dot.style.top = my + 'px';
+  rx += (mx - rx) * 0.12; ry += (my - ry) * 0.12;
+  ring.style.left = rx + 'px'; ring.style.top = ry + 'px';
+  requestAnimationFrame(animCursor);
+})();
+document.querySelectorAll('a, button, .job-card, .project-card, .tech-chip').forEach(el => {
+  el.addEventListener('mouseenter', () => {
+    dot.style.width = '14px'; dot.style.height = '14px';
+    ring.style.width = '54px'; ring.style.height = '54px';
+    ring.style.borderColor = 'rgba(236,72,153,0.8)';
+  });
+  el.addEventListener('mouseleave', () => {
+    dot.style.width = '8px'; dot.style.height = '8px';
+    ring.style.width = '36px'; ring.style.height = '36px';
+    ring.style.borderColor = 'rgba(99,102,241,0.7)';
+  });
+});
+
+/* ===== PARTICLE CANVAS ===== */
+const canvas = document.getElementById('particle-canvas');
+const ctx = canvas.getContext('2d');
+let W, H, particles = [];
+const COLORS = ['#6366f1','#ec4899','#06b6d4','#f59e0b'];
+const N = 90;
+
+function resize() {
+  W = canvas.width = window.innerWidth;
+  H = canvas.height = window.innerHeight;
+}
+resize();
+window.addEventListener('resize', resize);
+
+for (let i = 0; i < N; i++) {
+  particles.push({
+    x: Math.random() * W, y: Math.random() * H,
+    vx: (Math.random() - 0.5) * 0.5,
+    vy: (Math.random() - 0.5) * 0.5,
+    r: Math.random() * 2 + 1,
+    color: COLORS[Math.floor(Math.random() * COLORS.length)],
+    alpha: Math.random() * 0.5 + 0.2
+  });
+}
+
+function drawParticles() {
+  ctx.clearRect(0, 0, W, H);
+  // connections
+  for (let i = 0; i < particles.length; i++) {
+    for (let j = i + 1; j < particles.length; j++) {
+      const dx = particles[i].x - particles[j].x;
+      const dy = particles[i].y - particles[j].y;
+      const dist = Math.sqrt(dx*dx + dy*dy);
+      if (dist < 130) {
+        ctx.beginPath();
+        ctx.moveTo(particles[i].x, particles[i].y);
+        ctx.lineTo(particles[j].x, particles[j].y);
+        ctx.strokeStyle = particles[i].color;
+        ctx.globalAlpha = (1 - dist / 130) * 0.15;
+        ctx.lineWidth = 0.7;
+        ctx.stroke();
+      }
+    }
+  }
+  // dots
+  particles.forEach(p => {
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+    ctx.fillStyle = p.color;
+    ctx.globalAlpha = p.alpha;
+    ctx.fill();
+    p.x += p.vx; p.y += p.vy;
+    if (p.x < 0 || p.x > W) p.vx *= -1;
+    if (p.y < 0 || p.y > H) p.vy *= -1;
+  });
+  ctx.globalAlpha = 1;
+  requestAnimationFrame(drawParticles);
+}
+drawParticles();
+
+/* ===== MARQUEE ===== */
+const companies = ['Freyr Solutions','Citibank','Vivagene','AWS','Cisco','Palo Alto','Fortinet','SolarWinds','Python Automation','CCNA Certified','BGP Routing','OSPF','Wireshark','ServiceNow'];
+const track = document.getElementById('marquee-track');
+const makeItems = () => companies.map(c => `<div class="marquee-item"><span class="marquee-dot"></span>${c}</div>`).join('');
+track.innerHTML = makeItems() + makeItems(); // duplicate for infinite loop
+
+/* ===== TECH CHIP CLOUD ===== */
+const techs = ['BGP','OSPF','EIGRP','VLANs','HSRP','STP','MPLS','SD-WAN','QoS','TCP/IP','IPv4','IPv6','Cisco ASA','Palo Alto','Fortinet','Cisco ISE','VPN','NAT','ACLs','IPS/IDS','NAC','AWS VPC','Route Tables','NAT Gateway','Azure','VMware ESXi','SolarWinds','Wireshark','Splunk','SNMP','NetFlow','Python','Ansible','Bash','ServiceNow','Jira','Git','SecureCRT','DHCP','DNS','Cisco Catalyst','Cisco Nexus','HIPAA','PCI-DSS','Visio','Confluence'];
+const cloud = document.querySelector('.chip-cloud');
+cloud.innerHTML = techs.map(t => `<span class="tech-chip">${t}</span>`).join('');
+
+/* ===== INTERSECTION OBSERVER ===== */
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('visible');
+      // Skill bars
+      const bar = e.target.querySelector('.skill-bar-fill');
+      if (bar) bar.style.width = bar.dataset.w + '%';
+    }
+  });
+}, { threshold: 0.15 });
+
+// Reveal elements
+document.querySelectorAll('.reveal, .reveal-left, .reveal-right, .section-label, .section-title, .timeline-item, .project-card, .edu-card, .cert-card, .contact-card').forEach(el => {
+  observer.observe(el);
+});
+
+// Skill items
+document.querySelectorAll('.skill-item').forEach(el => {
+  observer.observe(el);
+});
+
+// Skill bars on scroll
+const barObserver = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      const bar = e.target;
+      setTimeout(() => { bar.style.width = bar.dataset.w + '%'; }, 200);
+    }
+  });
+}, { threshold: 0.5 });
+document.querySelectorAll('.skill-bar-fill').forEach(b => barObserver.observe(b));
+
+/* ===== STAGGER PROJECT CARDS ===== */
+document.querySelectorAll('.project-card').forEach((card, i) => {
+  card.style.transitionDelay = (i * 0.1) + 's';
+  observer.observe(card);
+});
+
+/* ===== TIMELINE STAGGER ===== */
+document.querySelectorAll('.timeline-item').forEach((item, i) => {
+  item.style.transitionDelay = (i * 0.15) + 's';
+});
+</script>
+</body>
+</html>
